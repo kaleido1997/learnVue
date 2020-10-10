@@ -1,9 +1,11 @@
 Vue.component('pane', {
     name: 'pane',
     template: '\
-        <div class="pane" v-show="isShow">\
-            <slot></slot>\
-        </div>',
+        <transition name="fade" mode="out-in">\
+            <div class="pane" v-show="isShow">\
+                <slot></slot>\
+            </div>\
+        </transition>',
     data: function () {
         return {
             isShow: true

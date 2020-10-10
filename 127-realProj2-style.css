@@ -40,5 +40,13 @@
 .tabs-content{
     padding: 8px 0;
 }
+.fade-enter-active,.fade-leave-active{
+    position: absolute;
+    transition: all .8s ease;
+}
+.fade-enter, .fade-leave-to{
+    transform: translateX(100px);
+    opacity: 0;
+}
 
 
