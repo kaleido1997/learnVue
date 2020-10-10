@@ -1,7 +1,9 @@
 Vue.component('pane', {
     name: 'pane',
     template: '\
-        <transition name="fade" mode="out-in">\
+        <transition name="fade" mode="out-in"> \
+        <!-- out-in：当前元素先进行过渡，完成之后新元素过渡进入。-->\
+        <!-- in-out：新元素先进行过渡，完成之后当前元素过渡离开。-->\
             <div class="pane" v-show="isShow">\
                 <slot></slot>\
             </div>\
