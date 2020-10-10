@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>116 v-model</title>
+    <style>[v-cloak] {display: none}</style>
+</head>
+<body>
+    <p>v-model指令，用于在表单类元素（输入框、下拉栏、选择框等）上双向绑定数据，例如在输入框上使用时，输入的内容会实时映射到绑定的数据上。</p>
+    <div id="app" v-cloak>
+        msg: {{ msg }} <br/> <br/>
+
+        <input type="text" v-model="inputMsg" placeholder="Type in your word">
+        The input message is: {{ inputMsg }}
+        <hr>
+
+        <textarea v-model="anotherMsg" placeholder="Type Here"></textarea>
+        <p>使用v-model后，表单控件显示的值只依赖所绑定的数据，不再关心初始化时的value属性。在textarea、/textarea之间插入的值，也不再生效</p>
+        <p>The input message is:</p>
+        <p style="white-space: pre">{{ anotherMsg }}</p>
+        <hr>
+
+        使用v-model时，如果是输入中文，在拼音阶段，Vue是不会更新数据的，当敲下汉字时才会触发更新。 <br/>
+
+        <p>输入的内容为：{{ chnMsg }}</p>
+        <input type="text" @input="realtimeInput($event)" placeholder="输入汉字，可实时输出">
+        <br/>
+    </div>
+
+    <div id="app2" v-cloak>
+        <h2>单选按钮input_radio</h2>
+        <input type="radio" v-bind:checked="picked">
+        <label>单选按钮</label>
+        <hr>
+        <input type="radio" v-model="picked" v-bind:value="pickedVal">
+        <hr>
+
+        <h2>互斥的单选按钮</h2>
+        <input type="radio" v-model="pickedItem" value="html" id="id_html">
+        <label for="id_html">HTML</label>
+        <br/>
+        <input type="radio" v-model="pickedItem" value="js" id="id_js">
+        <label for="id_js">JavaScript</label>
+        <br/>
+        <input type="radio" v-model="pickedItem" value="css" id="id_css">
+        <label for="id_css">CSS</label>
+        <br/>
+        <p>选择的项是：{{ pickedItem }}</p>
+        <hr>
+
+        <h2>复选按钮input_checkbox</h2>
+        <input type="checkbox" v-model="checked" id="checked">
+        <label for="checked">选择状态：{{ checked }}</label>
+        <hr>
+
+        <h2>复选按钮组合</h2>
+        <input type="checkbox" v-model="multiChecked" value="html" id="html">
+        <label for="html">HTML</label>
+        <br/>
+        <input type="checkbox" v-model="multiChecked" value="js" id="js">
+        <label for="js">JavaScript</label>
+        <br/>
+        <input type="checkbox" v-model="multiChecked" value="css" id="css">
+        <label for="css">CSS</label>
+        <br/>
+        <p>选择的项是：{{ multiChecked }}</p>
+        <hr>
+
+        <h2>选择列表select</h2>
+        <select v-model="selected">
+            <option>html</option>
+            <option value="js">JavaScript</option>
+<!--            option中如果含有value属性，v-model就会优先匹配value的值；如果没有，就会直接匹配option中的text-->
+            <option>css</option>
+        </select>
+        <p>选择的项是：{{ selected }}</p>
+        <hr>
+
+        <h2>可多选的选择列表</h2>
+        <select v-model="multiSelected" multiple>
+            <option>html</option>
+            <option value="js">JavaScript</option>
+            <option>css</option>
+        </select>
+        <p>选择的项是：{{ multiSelected }}</p>
+        虽然用select控件可以很简单地完成下拉选择的需求，但是在实际业务中反而不常用，<br/>
+        因为它的样式依赖平台和浏览器，无法统一，也不太美观，功能也受限，比如不支持搜索，<br/>
+        所以常见的解决方案是用div模拟一个类似的控件
+        <hr>
+
+        业务中，选择列表的option常用v-for、v-bind来动态输出，实现数据与界面的分离 <br/>
+        <select v-model="dynamicSelected">
+            <option
+                v-for="option in options"
+                v-bind:value="option.value">{{ option.text }}</option>
+        </select>
+        <p>选择的项是：{{ dynamicSelected }}</p>
+        <hr>
+
+        <h1>绑定动态值</h1>
+        <h2>单选按钮</h2>
+        <input type="radio" v-model="picked" v-bind:value="pickedVal">
+        <label>绑定动态值的单选按钮</label>
+        <p>{{ picked }}</p>
+        <p>{{ pickedVal }}</p>
+        在选中时，app.picked === app.value，值都是123
+        <hr>
+
+        <h2>复选框</h2>
+        <input
+            type="checkbox"
+            v-model="toggle"
+            v-bind:true-value="val1"
+            v-bind:false-value="val2">  <!-- 这里true-value、false-value为固定格式 -->
+        <label>复选框</label>
+        <p>{{ toggle }}</p>
+        <p>{{ val1 }}</p>
+        <p>{{ val2 }}</p>
+        勾选时，app.toggle === app.val1；未勾选时，app.toggle === app.val2
+        <hr>
+
+        <h2>选择列表</h2>
+        <select v-model="sltd">
+            <option v-bind:value="{ number: 123 }">num=123</option>
+        </select>
+        <p>{{ sltd.number }}</p>
+        当选中时，app.selected是一个Object，所以app.selected.number === 123。
+    </div>
+    <hr>
+
+    <div id="app3" v-cloak>
+        <h1>v-model的修饰符，用于控制数据同步的时机</h1>
+        <h2>.lazy：这时msg并非实时改变，而是在失焦（暂时切出界面）或按回车时才更新。</h2>
+        <p>Input: {{ msg }}</p>
+        <input type="text" v-model.lazy="msg">
+
+        <h2>.number：将输入的文本转化为number形式</h2>
+        <input type="number" v-model.number="numMsg">   <!-- type为number时只能输入数字 -->
+        <p>{{ typeof(numMsg) }}</p>
+
+        <h2>.trim：自动过滤输入的首尾空格</h2>
+        <p>{{ trimMsg }}</p>
+        <input type="text" v-model.trim="trimMsg">
+
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                msg: 'Hello World',
+                inputMsg: '',
+                anotherMsg: '',
+                chnMsg: ''
+            },
+            methods: {
+                realtimeInput($event) {
+                    this.chnMsg = $event.target.value;
+                }
+            }
+        });
+
+        var app2 = new Vue ({
+            el: '#app2',
+            data: {
+                picked: false,
+                pickedItem: '',
+
+                checked: false,
+                multiChecked: [],
+
+                selected: '',
+                multiSelected: [],
+
+                dynamicSelected: '',
+                options: [
+                    {
+                        text: 'HTML',
+                        value: 'html'
+                    },
+                    {
+                        text: 'JavaScript',
+                        value: 'js'
+                    },
+                    {
+                        text: 'CSS',
+                        value: 'css'
+                    }
+                ],
+
+                pickedVal: 123,
+
+                toggle: false,
+                val1: 'a',
+                val2: 'b',
+
+                sltd: ''
+            }
+        });
+
+        var app3 = new Vue ({
+            el: '#app3',
+            data: {
+                msg: '',
+                numMsg: '',
+                trimMsg: ''
+            }
+        })
+    </script>
+</body>
+</html>

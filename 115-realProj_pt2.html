@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>115 pt2</title>
+    <link rel="stylesheet" type="text/css" href="cartStyle.css">    <!-- 通过此句挂载css文件 -->
+</head>
+<body>
+    <div id="app" v-cloak>
+        <template v-if="higherList.length != 0">
+            <table>
+                <tbody v-for="(types, typeIndex) in higherList">  <!-- v-if="types.productList.length != 0"> 此部分用于“隐藏”已无产品的类别的表格 -->
+                <tr>
+                    <th>Type: {{ types.name }}</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Product Number</th>
+                    <th>Action to Remove <br/>
+                        Remove this Type <button @click="removeTypeInHigherList(typeIndex)">Remove</button></th>
+                    <th>Action to Select <br/>
+                        Select All Items in this Type <input type="checkbox" @click="swapTableChecked($event, types)"
+                               v-bind:checked="isTableAllChecked(types)"></th>
+                </tr>
+                <tr v-for="(item, index) in types.productList">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>
+                        <button @click="toReduce(index, types)" v-bind:disabled="item.count === 1">-</button>
+                        {{ item.count }}
+                        <button @click="toAdd(index, types)">+</button>
+                    </td>
+                    <td><button @click="toRemove(index, types)">Remove</button></td>
+                    <td>
+                        <input type="checkbox" @click="changeStatus(item)" v-bind:checked=item.isChecked>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div><input type="checkbox" @click="swapAllChecked($event)" :checked="isAllChecked()">Select All</div>
+            <div>Full Price: $ {{ totalPrice }}</div>
+        </template>
+
+        <div v-else>Shopping Cart is empty!</div>
+
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="cartIndex_pt2.js"></script>
+</body>
+</html>

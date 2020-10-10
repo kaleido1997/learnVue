@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>118 component cont.</title>
+</head>
+<body>
+    <div id="app">
+        <my-component></my-component>
+        <my-component></my-component>
+        <my-component></my-component>       <!-- 因为三者（组件）引用同一个组件外数据，所以点任意一个按钮，三个数字都会增加 -->
+        <hr>
+
+        <unique-comp></unique-comp>
+        <unique-comp></unique-comp>
+        <unique-comp></unique-comp>         <!-- 因为三者（组件）都引用组件内数据，所以点任意一个按钮，只有自己的数字会增加 -->
+        <hr>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var numdata = {
+            counter: 0
+        };
+
+        Vue.component('my-component', {
+            template: '<button @click="counter++">{{ counter }}</button>',
+            data: function () {             //基本的data也可以在上面html语句中定义（见119.html）
+                return numdata;
+            }
+        });
+
+        Vue.component('unique-comp', {
+            template: '<button @click="uniq_count++" @keydown.38="uniq_count++" @keydown.40="uniq_count--">{{ uniq_count }}</button>',
+            data: function () {
+                return {
+                    uniq_count: 0       // 在这里每个component对应一个独立的data，所以几个按钮间互不干扰
+                };
+            }
+        })
+
+        var app = new Vue ({
+            el: '#app'
+        })
+    </script>
+</body>
+</html>

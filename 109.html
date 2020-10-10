@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>109 (v-on)</title>
+</head>
+<body>
+    <div id="app">
+        <p v-if="isShow">A part for text</p>
+        <button v-on:click="toClose">Close the text</button>
+<!--        v-on:click可以另写为@click-->
+        <input type="submit" value="Open the text pls" @click="toOpen">
+<!--        几种召唤改变页面按钮的方式-->
+<!--        <button v-on:click="isShow = false">Close the text</button>-->
+<!--        可以直接在click里进行操作-->
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                isShow: true
+            },
+            methods: {
+                toClose(){
+                    this.isShow = false;
+                },
+                toOpen(){
+                    this.isShow = true;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>123 slot插槽</title>
+</head>
+<body>
+    <div id="app">
+        <span>在父组件即app中，若有语句<code>&ltchild-component&gtmessage&lt/child-component&gt</code>，则这里的message就是一个slot，绑定父组件的数据</span>
+        <p>当需要让组件组合使用，混合父组件的内容与子组件的模板时，就会用到slot。</p>
+        <p>props传递数据、events触发事件和slot内容分发就构成了Vue组件的3个API来源。</p>
+        <hr>
+
+        <comp-child v-show="showChild"></comp-child>
+        <!-- 这里的showChild绑定的是父组件，即app的数据 -->
+        <br/>
+        <comp-child-bind></comp-child-bind>
+        <!-- 这里的showChild设置在子组件中 -->
+        <hr>
+
+        <p><strong>Single slot</strong></p>
+        <comp-rand>
+<!--            <p>Some content</p>-->
+<!--            <p>More content</p>-->
+        </comp-rand>
+        <hr>
+
+        <p><strong>Slot with name</strong></p>
+        <comp-named-slot>
+            <h2 slot="header">The header</h2>
+<!--            <p>Some content</p>-->
+<!--            <p>More content</p>-->
+            <div slot="footer">Information below</div>
+        </comp-named-slot>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('comp-child', {
+            template: '<div>Child Component</div>'
+        });
+
+        Vue.component('comp-child-bind', {
+            template: '<div v-show="showChild">Child Component</div>',
+            data: function () {
+                return {
+                    showChild: true
+                }
+            }
+        });
+
+        Vue.component('comp-rand', {
+            template: '\
+            <div>\
+                <slot>\
+                    <p>Content shown if no content is included in the upper-component (which is the app)</p>\
+                </slot>\
+            </div>'
+        });
+        // 在子组件内使用特殊的<slot>元素就可以为这个子组件开启一个slot（插槽），在父组件模板里，插入在子组件标签内的所有内容将替代子组件的<slot>标签及它的内容。
+        // 在父组件没有slot时，会渲染子组件中这段默认的文本；如果写入了slot，那就会替换子组件中的slot。
+
+        Vue.component('comp-named-slot', {
+            template:'\
+            <div class="container">\
+                <div class="header">\
+                    <slot name="header"></slot>\
+                </div>\
+                <div class="main">\
+                    <slot>Content shown if no content is included in the upper-component</slot>\
+                </div>\
+                <div class="footer">\
+                    <slot name="footer"></slot>\
+                </div>\
+            </div>'
+        });
+        // 在<div class="main">内的<slot>没有使用name特性，它将作为默认slot出现，父组件没有使用slot特性的元素与内容都将出现在这里。
+        // 如果没有指定默认的匿名slot，父组件内多余的内容片段都将被抛弃。
+
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                showChild: true
+            }
+        })
+    </script>
+</body>
+</html>

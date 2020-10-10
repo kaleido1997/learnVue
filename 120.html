@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>120 component 组件间传递数据 cont.</title>
+</head>
+<body>
+    <div id="app">
+        <my-component v-bind:init-count="1"></my-component>     <!-- 单向数据传递 -->
+        <computed-compo v-bind:width="100"></computed-compo>    <!-- computed -->
+    </div>
+
+    <div id="app2">     <!-- 本例将props用于验证输入的数据类型 -->
+        <input type="text" v-model="inputMsg">
+<!--        <button value="Submit" @click="checkType"></button>-->
+        <check-compo v-bind:msg="inputMsg"></check-compo>
+        <parent></parent>
+    </div>
+
+    <div id="app3">
+        <valid-two v-bind:content="2"></valid-two>
+        <valid-two content="Hello Validation Two"></valid-two>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('my-component', {
+            props: ['initCount'],
+            template: '<div>{{ count }}</div>',
+            data: function () {
+                return {
+                    count: this.initCount
+                    // 组件中声明了数据count，它在组件初始化时会获取来自上级组件的initCount，之后就与之无关了，只用维护count，这样就可以避免直接操作initCount
+                }
+            }
+        });
+
+        Vue.component('computed-compo', {
+            props: ['width'],
+            template: '<div v-bind:style="style">Content for this template</div>',
+            computed: {                         //用computed来转变原始的prop输入值
+                style: function () {
+                    return {
+                        width: this.width + 'px'
+                    }
+                }
+            }
+        });
+
+        var app = new Vue ({
+            el: '#app'
+        });
+
+        Vue.component('check-compo', {
+            props: ['msg', {
+                propA: Number,              //必须是数字类型
+                propB: [String, Number],    //必须是字符串或数字类型
+                propC: {
+                    type: Boolean,
+                    default: true
+                },
+                propD: {
+                    type: Number,
+                    required: true          //数字，且必须要填
+                },
+                propE: {
+                    type: Array,
+                    default: function () {
+                        return [];          //如果是数组或对象，默认值必须是一个函数来返回
+                    }
+                },
+                propF: {                    //自定义验证函数
+                    valiFun: function (val) {
+                        return val > 10;
+                    }
+                }
+            }],
+            template: '<div>{{ msg }}</div>'
+        });
+
+        var childNode = {
+            template: "<div>{{ forChildMsg }}</div>",
+            props: {"for-child-msg": Number}
+        };
+
+        var parentNode = {
+            template: `
+                    <div class='parent'>
+                        <child v-bind:for-child-msg="msg"></child>
+                    </div>
+                    `,
+            components: {
+                child: childNode
+            },
+            data() {
+                return {
+                    msg: 123456
+                };
+            }
+        };
+
+        var app2 = new Vue ({
+            el: '#app2',
+            data: {
+                inputMsg: ''
+            },
+            // methods: {
+            //     checkType() {
+            //         console.log(this.propA);
+            //     }
+            // },
+            components: {
+                parent: parentNode
+            }
+        });
+
+        var validTwo = {
+            props: {content: String},
+            template: '<div>{{ content }}</div>'
+        };
+
+        var app3 = new Vue ({
+            el: '#app3',
+            components: {
+                validTwo: validTwo
+            }
+        })
+    </script>
+</body>
+</html>

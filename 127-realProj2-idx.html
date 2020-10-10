@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>128 标签页组件</title>
+    <link rel="stylesheet" type="text/css" href="127-realProj2-style.css">
+<!--    业务需求：-->
+<!--    每个标签页的主体内容肯定是由使用组件的父级控制的，所以这部分是一个slot，而且slot的数量决定了标签切换按钮的数量。-->
+<!--    点击每个标签按钮时，另外几个标签对应的slot应该被隐藏掉。-->
+<!--    一般这个时候，比较容易想到的解决办法是，在slot里写3个div，在接收到切换通知时，显示和隐藏相关的div。-->
+<!--    这样设计没有问题，只不过体现不出组件的价值来，因为还是写了一些与业务无关的交互逻辑，-->
+<!--    而这部分逻辑最好让组件本身帮忙处理，我们只需聚焦在slot内容本身，这才是与我们业务最相关的。-->
+<!--    这种情况下，可以再定义一个子组件pane，嵌套在标签页组件tabs里，业务代码都放在pane的slot内，3个pane组件作为整体成为tabs的slot。-->
+<!--    tabs是标签页外层的组件，pane是标签页嵌套的组件-->
+<!--    tabs和pane两个组件是分离的，但是tabs组件上的标题应该由pane组件来定义，因为slot写在pane里，-->
+<!--    因此在组件初始化（及标签标题动态改变）时，tabs要从pane里获取标题，并保存起来，自己使用。-->
+</head>
+<body>
+    <div id="app" v-cloak>
+        <tabs v-model="activeKey">
+            <pane label="Tab 1" name="1">
+                Content in Tab 1
+            </pane>
+            <pane label="Tab 2" name="2">
+                Content in Tab 2
+            </pane>
+            <pane label="Tab 3" name="3">
+                Content in Tab 3
+            </pane>
+        </tabs>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script src="127-realProj2-style.css"></script>
+    <script src="127-realProj2-pane.js"></script>
+    <script src="127-realProj2-tabs.js"></script>
+
+    <script type="text/javascript">
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                activeKey: '1'
+            }
+        })
+    </script>
+
+</body>
+</html>

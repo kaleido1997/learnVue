@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>106-change color</title>
+</head>
+<body>
+    <div id="app">
+        <span>Press "Begin" to begin changing colors!</span> <br/>
+        <span>Press "Stop" to stop changing colors!</span> <br/> <br/>
+        <input type="button" value="Begin" @click="keepChanging">
+        <input type="submit" value="Stop" @click="stopChange">
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            // data: {
+            //     myVar: setInterval(function (){ this.beginChange() }, 300)
+            // },
+            methods: {
+                beginChange(){
+                    // console.log('222222222222222')
+                    var x = document.body;
+                    x.style.backgroundColor = x.style.backgroundColor == "purple" ? "pink": "purple";
+                    // return null
+                },
+                keepChanging(){
+                    this.myFun = setInterval(this.beginChange, 300)
+                    // this这里指vue这个app，变量前加this使其变为全局变量，否则就是函数内变量
+                    // 定义的同时就已经开始调用
+                },
+                stopChange(){
+                    clearInterval(this.myFun);
+                },
+                // test(){
+                //     this.beginChange()
+                // }
+            }
+        })
+    </script>
+</body>
+</html>

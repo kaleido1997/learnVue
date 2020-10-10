@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>117 components</title>
+</head>
+<body>
+    <div id="app">
+        <my-component></my-component>
+        <table>
+            <tbody is="my-component"></tbody>       <!-- 部分组件需要用is挂载组件 -->
+        </table>
+        <comp2></comp2>
+    </div>
+
+    <div id="app2">
+        <local-component></local-component>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('my-component', {     //这是全局的component的定义方式，由于HTML特性不区分大小写，组件要用短横分隔kebab-case命名
+                template: '<div>Content for this template</div>'
+        });
+
+        Vue.component('comp2', {
+            template: '<div>{{ msg }}</div>',
+            data: function () {     //这里data是函数，必须要return
+                return {
+                    msg: 'msg in template';
+                }
+            }
+        });
+
+        var app = new Vue ({
+            el: '#app'
+        });
+
+        var Child = {
+            template: '<div>Content for template of local variable</div>'   //这是局部的component的定义方式
+        };
+
+        var app2 = new Vue ({
+            el: '#app2',
+            components: {
+                'local-component': Child
+            }
+        })
+    </script>
+</body>
+</html>

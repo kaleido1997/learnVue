@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>113 v-directives</title>
+    <style>[v-cloak] {display: none}</style>    <!-- v-cloak如下 -->
+</head>
+<body>
+    <div id="app1" v-cloak> <!-- v-cloak用来暂时遮挡vue实例加载完成前，代码本身的部分（如{{ message }}），解决初始化慢导致页面闪动 -->
+        {{ msg }}
+    </div>
+
+    <div id="app2" v-cloak>
+        <p>stat = {{ stat }}</p>
+        <p v-if="stat === 1">Now stat = 1</p>
+        <p v-else-if="stat === 2">Now stat = 2</p>
+        <p v-else="stat != 1 && stat != 2">Now stat != 1 or 2</p>
+        <button @click="addStat">Press to add stat with 1</button>
+    </div>
+
+    <div id="app5">
+        <p v-show="stat === 1">Now stat = 1</p>
+        <p v-show="stat === 2">Now stat = 2</p>
+    </div>
+<!--    v-if与v-show功能类似。但若初始值为false，v-if不会渲染该元素，直至变为true；而v-show一直会渲染-->
+<!--    v-if更适合条件不经常改变的场景，因为它切换开销相对较大，而v-show适用于频繁切换条件-->
+<!--    v-show不能与template绑定使用（但可以在子组件的template中与其他元素绑定，见123.html）-->
+
+    <div id="app3">
+        <p>Change without erasing data:</p>
+        <template v-if="type === 'name'">
+            <label>Username: </label>
+            <input placeholder="Input your username">
+        </template>
+<!--        在这里用template而非div的原因是，label和input要绑定在一起，且需要用v-if-->
+        <template v-else>
+            <label>Email: </label>
+            <input placeholder="Input your email">
+        </template>
+        <button @click="changeInputType">Press to change the type of input</button>
+    </div>
+<!--    Vue默认复用已输入的元素（如在生成的网页中输入John，点按钮后John不会消失）-->
+<!--    若不愿复用，则需用到key-->
+    <div id="app4">
+        <p>Change with erasing data:</p>
+        <template v-if="type === 'name'">
+            <label>Username: </label>
+            <input placeholder="Input your username" key="name-input">
+        </template>
+        <template v-else>
+            <label>Email: </label>
+            <input placeholder="Input your email" key="email-input">    <!-- 将key改为一致后可以复用 -->
+        </template>
+        <button @click="changeInputType">Press to change the type of input</button>
+    </div>
+
+    <div id="app6">
+        <hr>
+        <span v-for="n in 10">{{ n }} </span>   <!-- 这里n不用在data中定义 -->
+
+        <ul>
+            <li v-for="book in books">{{ book.name }}</li>
+        </ul>
+        <hr>
+
+        <ul>
+            <li v-for="(book, index) in books">{{ index }} - {{ book.name }}</li>
+        </ul>
+        <hr>
+
+        <ul>
+            <template v-for="book in books_detailed">
+                <li>Book Name: {{ book.name }}</li>
+                <li>Book Author: {{ book.author }}</li>
+            </template>
+        </ul>
+        <hr>
+
+        <span v-for="value in user">{{ value }} </span> <br/>
+        <span v-for="(value, key, index) in user">{{ index }} - {{ key }}: {{ value }}<br/></span>
+    </div>
+
+    <div id="app7">
+        <hr>
+        <ul>
+            <span>Books with filter</span>
+            <template v-for="book in filterBooks">
+                <li>Book name: {{ book.name }}</li>
+                <li>Book author: {{ book.author }}</li>
+            </template>
+            <br/>
+            <span>Books after sorting</span>
+            <template v-for="book in sortedBooks">
+                <li>Book name: {{ book.name }}</li>
+                <li>Book author: {{ book.author }}</li>
+            </template>
+        </ul>
+    </div>
+<!--    ul和li的组合用来创建列表-->
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app1 = new Vue ({
+            el: '#app1',
+            data: {
+                msg: 'A random text'
+            }
+        });
+
+        var app2 = new Vue ({
+            el: '#app2',
+            data: {
+                stat: 0
+            },
+            methods: {
+                addStat() {
+                    this.stat += 1;
+                }
+            }
+        });
+
+        var app3 = new Vue ({
+            el: '#app3',
+            data: {
+                type: 'name'
+            },
+            methods: {
+                changeInputType() {
+                    this.type = this.type === 'name' ? 'email' : 'name';
+                }
+            }
+        });
+
+        var app4 = new Vue ({
+            el: '#app4',
+            data: {
+                type: 'name'
+            },
+            methods: {
+                changeInputType() {
+                    this.type = this.type === 'name' ? 'email' : 'name';
+                }
+            }
+        });
+
+        var app5 = new Vue ({
+            el: '#app5',
+            data: {
+                stat: 2
+            }
+        });
+
+        var app6 = new Vue ({
+            el: '#app6',
+            data: {
+                books: [
+                    { name: 'Book 1' },
+                    { name: 'Book 2' },
+                    { name: 'Book 3' }
+                ],
+                books_detailed: [
+                    {
+                        name: 'Book 1',
+                        author: 'Person 1'
+                    },
+                    {
+                        name: 'Book 2',
+                        author: 'Person 2'
+                    },
+                    {
+                        name: 'Book 3',
+                        author: 'Person 3'
+                    }
+                ],
+                user: {
+                    name: 'Jack',
+                    gender: 'Male',
+                    age: 26
+                } //表面结构：（index-)key-value；调用时结构：value, key, index
+            }
+        });
+
+        app6.books_detailed.push({
+            name: 'A new book',
+            author: 'A new author'
+        });  //push表示向其中添加元素
+
+        Vue.set(app6.books_detailed, 2, {
+            name: 'New name for Book 3',
+            author: 'New author for Book 3'
+        }); //Vue.set用于修改元素
+
+        app6.books_detailed.splice(2, 1, {
+            name: 'New name for Book 3',
+            author: 'New author for Book 3'
+        }); //splice用于添加、修改或删除元素
+        //(idx1：定位；idx2：0或1，0表示在此处添加，1表示替换该元素；idx3：可为null，若为null则删除该元素，若不为null则添加或替换该元素)
+
+        var app7 = new Vue ({
+            el: '#app7',
+            data: {
+                books_app7: [
+                    {
+                        name: 'Vue.js 1',
+                        author: 'VueAuthor1'
+                    },
+                    {
+                        name: 'JavaScript 1',
+                        author: 'JSAuthor 1'
+                    },
+                    {
+                        name: 'JavaScript 2',
+                        author: 'JSAuthor 2'
+                    }
+                ]
+            },
+            computed: {
+                filterBooks() {
+                    return this.books_app7.filter(function (book) {
+                        return book.name.match(/JavaScript/);
+                    });     //在computed中可进行筛选、排序等
+                },
+                sortedBooks() {
+                    return this.books_app7.sort(function (a, b) {
+                        return a.name.length < b.name.length;
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+</html>

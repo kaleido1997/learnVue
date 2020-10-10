@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>121 上下级组件间通信</title>
+</head>
+<body>
+    <div id="app">
+        <p>子组件用$emit()来触发事件，父组件用$on()来监听子组件的事件。</p>
+        <p>Total Number: {{ totalNum }}</p>
+        <!-- 方法1：自定义事件v-on绑定函数 -->
+        <my-component
+            @increase-num="handleTotal"
+            @reduce-num="handleTotal"></my-component>
+        <!-- 方法2：v-model -->
+        <p>Total Number: {{ totalModel }}</p>
+        <comp2 v-model="totalModel"></comp2>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('my-component', {         // 用右斜杠继续下一行
+            template: '\
+            <div>\
+                <button @click="handleIncrease">+1</button>\
+                <button @click="handleReduce" v-bind:disabled="counter === 0">-1</button>\
+            </div>',        // 这里若不用div则无法显示两个button
+            data: function () {
+                return {
+                    counter: 0
+                }
+            },
+            methods: {
+                handleIncrease() {
+                    this.counter++;
+                    this.$emit('increase-num', this.counter);
+                        // 子组件用$emit()来触发事件，emit()内第一个参数是对应的v-on事件名，之后的参数是事件绑定的函数内所需的参数变量
+                        // 这里event事件的命名不要用camelCase大小写格式，否则无法正确绑定
+                },
+                handleReduce() {
+                    this.counter--;
+                    this.$emit('reduce-num', this.counter);
+                }
+            }
+        });
+
+        Vue.component('comp2', {
+            template: '\
+            <div>\
+                <button @click="modelIncrease">+1</button>\
+                <button @click="modelReduce">-1</button>\
+            </div>',
+            data: function () {
+                return {
+                    counter: 0
+                }
+            },
+            methods: {
+                modelIncrease() {
+                    this.counter++;
+                    this.$emit('input', this.counter);
+                    // 这次组件中$emit()的事件名是特殊的'input'，表示赋值，无需在app的methods中再定义一个赋值函数
+                    // 而在父级组件中，并没有在comp2中使用@input = "handler"，而是直接用了v-model绑定的一个数据totalModel
+                },
+                modelReduce() {
+                    this.counter--;
+                    this.$emit('input', this.counter);
+                }
+            }
+        });
+
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                totalNum: 0,
+                totalModel: 0
+            },
+            methods: {
+                handleTotal(total) {
+                    this.totalNum = total;
+                }
+            }
+        })
+    </script>
+
+    <div id="app2">
+        <hr>
+        <p>Components for input with v-model</p>
+        <mycomp v-model="totalNum"></mycomp>
+<!--        实现这样一个具有双向绑定的v-model组件要满足下面两个要求：接收一个value属性、在有新的value时触发input事件-->
+        <button @click="handleReduce">-1</button>
+        <p>Total Number: {{ totalNum }}</p>
+    </div>
+    <script>
+        Vue.component('mycomp', {
+            props: ['valReceived'],     // props用来接收上级传递下来的数据（见组件mycomp语句中v-model的部分）
+            template: '<input v-bind:value="valReceived" @input="updateValue" placeholder="Original Input">',
+            methods: {
+                updateValue(event) {
+                    this.$emit('input', event.target.value);
+                }
+            }
+        });
+
+        var app2 = new Vue ({
+            el: '#app2',
+            data: {
+                totalNum: ''
+            },
+            methods: {
+                handleReduce() {
+                    this.totalNum--;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>103</title>
+</head>
+<body>
+    <div id="app">
+        a = {{myData.a}}
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var b = 2
+        var myData = {a: 1}
+        var app = new Vue({
+            el: '#app',
+            data: myData
+        })
+        app.a = 3
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>112 v-bind & class & style</title>
+<!--    v-bind的作用是动态更新HTML元素上的属性-->
+</head>
+<body>
+    <div id="app">
+        <h1>v-bind绑定class的几种方式</h1>
+        <h2>对象语法</h2>
+        <div v-bind:class="{'active': isActive}"></div>
+        <div class="static" v-bind:class="{'active': isActive, 'error': isError}"></div>
+        <div v-bind:class="compClasses1"></div>
+        <hr>
+
+        <h2>数组语法</h2>
+        <div v-bind:class="[activeCls, errorCls]"></div>
+        <div v-bind:class="[isActive ? 'active' : '', 'error']"></div>
+        <div v-bind:class="[{'active': isActive}, 'error']"></div>
+        <button v-bind:class="compClasses2" @click=console.log(Date())>A Random Button</button>
+
+        <div v-bind:style="{'color': color, 'fontSize': fontSize + 'px'}">A random text</div>
+        <div v-bind:style="styles">Another random text</div>
+        <hr>
+
+        <h2>与组件绑定</h2>
+<!--        如果直接在自定义组件上使用class或:class，样式规则会直接应用到这个组件的根元素上。-->
+        <comp-bind v-bind:class="{ 'active': isActive }"></comp-bind>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('comp-bind', {
+            template: '<p class="article">Some articles</p>'
+        });
+
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                isActive: true,
+                isError: false,
+                error: null,
+
+                activeCls: 'active',
+                errorCls: 'error',
+
+                size: 'large',
+                disabled: true,
+
+                color: 'red',
+                fontSize: '14',
+                styles: {
+                    color: 'blue',
+                    fontSize: '24' + 'px'
+                }
+            },
+            computed: {
+                compClasses1() {
+                    return {
+                        active: this.isActive && !this.error,
+                        'text-fail': this.error && this.error.type === 'fail'
+                    };
+                },
+                compClasses2() {
+                    return [
+                        'btn',      // btn for button
+                        {
+                            ['btn-' + this.size]: this.size !== '',
+                            ['btn-disabled']: this.disabled
+                        }
+                    ];
+                }
+            }
+        })
+    </script>
+</body>
+</html>

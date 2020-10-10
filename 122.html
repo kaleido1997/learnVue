@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>122 同级组件间传递数据</title>
+</head>
+<body>
+    <div id="app">
+        <p>方法1：同级组件间需要中央事件总线bus来作为中介传递数据</p>
+        <comp-a></comp-a>
+        {{ busMsg }}
+        <hr>
+
+        <p>方法2：this.$parent/$children调用父/子链</p>
+        <comp-b></comp-b>
+        {{ parentMsg }}
+        <hr>
+
+        <p>方法3：子组件索引</p>
+        <button @click="handleRef">Acquire child app with ref</button>
+        <comp-c ref="compCRef"></comp-c>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var bus = new Vue ();
+
+        Vue.component('comp-a', {
+            template: '<button @click="handleEvent">Pass data with bus</button>',
+            // data: {
+            //     inputMsg: '233'
+            // },
+            methods: {
+                handleEvent() {
+                    bus.$emit('listen-on-msg', 'Data from comp-a');
+                }
+            }
+        });
+
+        Vue.component('comp-b', {
+            template: '<button @click="handleEvent">Pass data with parent</button>',
+            methods: {
+                handleEvent() {
+                    this.$parent.parentMsg = 'Data from comp-b';
+                }
+            }
+        });
+        // 在这里，父子组件紧耦合，子组件数据依赖父组件。而理想情况下，只有组件自己能修改它的状态。所以此方法应尽量避免
+
+        Vue.component('comp-c', {
+            template: '<div>Child Component</div>',
+            data: function () {
+                return {
+                    msg: 'Data from comp-child'
+                }
+            }
+        });
+        // 子组件索引的方法：用特殊的属性ref来为子组件指定一个索引名
+
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                busMsg: '',
+                parentMsg: ''
+            },
+            methods: {
+                handleRef() {
+                    var msg = this.$refs.compCRef.msg;      // 定义时是ref，用时是$refs
+                    // 在子组件标签上使用ref指定一个名称，并在父组件内通过this.$refs来访问指定名称的子组件
+                    // $refs只在渲染完成后才填充，并且它是非响应式的
+                    console.log(msg);
+                }
+            },
+            mounted: function () {
+                var _this = this;
+                // 在实例初始化时，监听来自bus实例的事件
+                bus.$on('listen-on-msg', function (msgFromOther) {
+                    _this.busMsg = msgFromOther;
+                });
+            }
+        })
+        // 以上首先创建了一个名为bus的空Vue实例，里面没有任何内容；然后全局定义了组件comp-a；
+        // 最后创建Vue实例app，在app初始化时，在生命周期mounted钩子函数里监听了来自bus的事件listen-on-msg，
+        // 而在组件comp-a中，点击按钮会通过bus把事件listen-on-msg发出去，
+        // 此时app就会接收到来自bus的事件，进而在回调里完成自己的业务逻辑。
+    </script>
+</body>
+</html>

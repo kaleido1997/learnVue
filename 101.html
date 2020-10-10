@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>101</title>
+    </head>
+
+    <body>
+
+        <div id="app">
+            {{message}} {{name}} a = {{a}}, b = {{b}}
+        </div>
+
+        <!--        <script src="../vue.js" type="text/javascript" charset="utf-8"></script>-->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!--        <script src="https//unpkg.com/vue/dist/vue.min.js"></script>-->
+
+        <script type="text/javascript">
+            let data = {a: 1, b: 2};
+            // let app = new Vue({
+            //     el: '#app',
+            //     data: {
+            //         message: 'Hello Vue!',
+            //         name: 'niupi'
+            //     }
+            // });
+            let vm = new Vue({
+                el: '#app',
+                data: data
+            });
+            data.a = 'hi, new '
+            vm.$watch('a', function (newVal, oldVal){
+                console.log(newVal, oldVal);
+            })
+            vm.$data.a = 'change'
+        </script>
+
+        <div id="app-2">
+          <span v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+          </span>
+        </div>
+
+        <script>
+            let app2 = new Vue({
+                el: '#app-2',
+                data: {
+                    message: '页面加载于 ' + new Date().toLocaleString()
+                }
+            })
+        </script>
+
+    </body>
+</html>

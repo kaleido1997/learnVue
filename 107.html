@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>107 (v-pre, v-html)</title>
+</head>
+<body>
+    <div id="app">
+        <span v-pre>{{ v-pre表示这里不会被编译，只显示纯粹的文本 }}</span> <br/>
+        <span v-pre>{{ number + 1 }}</span> <br/>
+        <span>{{ oneText.split(',').reverse().join('?')}}</span> <br/>
+        <span v-html="oneLink"></span>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                oneLink: '<a href="https://www.baidu.com">This is a website.</a>',
+                number: 1,
+                oneText: 'a,normal,text'
+            }
+        })
+    </script>
+</body>
+</html>

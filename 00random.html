@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>randomUse</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="name">
+        <button @click="pushName">Submit Name</button>
+        <br/>
+        <h1>Hello: <span>{{ showName }}</span></h1>
+    </div>
+
+<!--    v-bind和v-model的区别 https://segmentfault.com/a/1190000014813168-->
+<!--    简单来说，区别如下：-->
+<!--    1.v-bind用来绑定数据和属性以及表达式-->
+<!--    2.v-model是用在表单中，实现双向数据绑定的，在表单元素外使用不起作用-->
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                name: '',
+                showName: ''
+            },
+            methods: {
+                pushName() {
+                    this.showName = this.name
+                    console.log("Name Submitted!")
+                }
+            }
+        })
+    </script>
+</body>
+</html>

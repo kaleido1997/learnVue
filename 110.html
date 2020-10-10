@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>110 (computed & multi_vue)</title>
+</head>
+<body>
+    <div id="app">
+        {{ text }} <br/>
+        <button @click="toReverse">Reverse the text</button> <br/>
+        {{ reversedText }}
+<!--        以上亦说明{{}}返回的是其内的值，函数若无return的话则为null-->
+        <p>
+            Part 2: Prices from Packages: <br/>
+            Besides of pkg1 and pkg2, there's still pkg3 as: <br/>
+            <input type="text" v-model="name" placeholder="Product name">
+            <input type="number" v-model="price" placeholder="Product price">
+            <input type="number" v-model="number" placeholder="Product number"> <br/>
+            So the full price should be: {{ fullPrices }}.
+        </p>
+    </div>
+
+    <span>Part 3:</span>
+    <div id="app1">
+        This is APP_1 <br/>
+        {{ prev_text }}
+    </div>
+    <div id="app2">
+        This is APP_2 <br/>
+        {{ reversedText }}
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                text: '123,456',
+                name: '',
+                price: '',
+                number: '',
+                pkg1: [
+                    {
+                        name: 'iPhone',
+                        price: 1000,
+                        number: 2
+                    },
+                    {
+                        name: 'iPad',
+                        price: 2000,
+                        number: 3
+                    }
+                ],
+                pkg2: [
+                    {
+                        name: 'apple',
+                        price: 2,
+                        number: 3
+                    },
+                    {
+                        name: 'pear',
+                        price: 5,
+                        number: 7
+                    }
+                ]
+            },
+            computed: {
+                reversedText(){
+                    return this.text.split(',').reverse().join(',');
+                },
+                fullPrices(){
+                    var fullPrice = 0;
+                    for (var i = 0; i < this.pkg1.length; i++) {
+                        fullPrice += this.pkg1[i].price * this.pkg1[i].number;
+                    }
+                    for (var i = 0; i< this.pkg2.length; i++) {
+                        fullPrice += this.pkg2[i].price * this.pkg2[i].number;
+                    }
+                    fullPrice += this.price * this.number;
+                    return fullPrice;
+                }
+            },
+            methods: {
+                toReverse(){
+                    this.text = this.text.split(',').reverse().join(',');
+                }
+            }
+        });
+
+        var app1 = new Vue ({
+            el: '#app1',
+            data: {
+                prev_text: '123,456'
+            }
+        });
+        var app2 = new Vue ({
+            el: '#app2',
+            computed: {
+                reversedText() {
+                    return app1.prev_text.split(',').reverse().join(',');
+                }
+            }
+        })
+    </script>
+</body>
+</html>

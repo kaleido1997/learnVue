@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>125 component advanced</title>
+</head>
+<body>
+    <div id="app">
+        <h1>递归调用组件</h1>
+        <comp-recur v-bind:count="1"></comp-recur>
+        <hr>
+
+        <h1>内联模板</h1>
+        <!-- 组件的模板一般都是在组件的template选项内定义的，而Vue提供了一个内联模板的功能， -->
+        <!-- 在使用组件时，给组件标签使用inline-template特性，组件就会把它的内容当作模板，而不是把它当内容分发 -->
+        <comp-inline inline-template>
+            <div>
+                <h2>在父组件中定义子组件的模板</h2>
+                <p>{{ msginComp }}</p>
+                <p>{{ msginApp }}</p>
+            </div>
+        </comp-inline>
+        <hr>
+
+        <h1>动态组件</h1>
+<!--        Vue在app中提供了一个特殊的元素<component>用来动态地挂载不同的组件（即不使用Vue.component），使用is特性来选择要挂载的组件-->
+        <component v-bind:is="compName"></component>
+        <button @click="handleChangeComp('A')">Change to A</button>
+        <button @click="handleChangeComp('B')">Change to B</button>
+        <button @click="handleChangeComp('C')">Change to C</button>
+        <br/>
+
+<!--        is也可以直接绑定在组件对象上-->
+        <component v-bind:is="compVar"></component>
+        <hr>
+
+        <h1>异步组件</h1>
+<!--        一开始把所有的组件都加载是没必要的一笔开销。Vue允许将组件定义为一个工厂函数，动态地解析组件。-->
+<!--        只在组件需要渲染时触发工厂函数，并且把结果缓存起来，用于后面的再次渲染。-->
+        <comp-async></comp-async>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('comp-recur', {
+            name: 'comp-recur', // 为了让组件在它的模板内可以递归地调用自己，需要给组件设置name的选项
+            props: {
+                count: {
+                    type: Number,
+                    default: 1
+                }
+            },
+            template: '\
+            <div class="child">\
+                <comp-recur\
+                    v-bind:count="count + 1"\
+                    v-if="count < 3"></comp-recur>\
+            </div>'
+            // 设置name后，在组件模板内就可以递归使用了。不过需要注意的是，必须给一个条件来限制递归数量，否则会抛出错误：max stack size exceeded。
+            // 组件递归使用可以用来开发一些具有未知层级关系的独立组件，比如级联选择器（地名选择）和树形控件。
+        });
+
+        Vue.component('comp-inline', {
+            data: function () {
+                return {
+                    msginComp: 'Data claimed in child component'
+                }
+            }
+        });
+        // 在父组件中声明的数据msginApp和子组件中声明的数据msginComp，两个都可以渲染（如果同名，优先使用子组件的数据）。
+        // 这反而是内联模板的缺点，就是作用域比较难理解。如果不是非常特殊的场景，建议不要轻易使用内联模板。
+
+        var Home = {
+            template: '<p>Welcome Home!</p>'
+        };
+
+        Vue.component('comp-async', function (resolve, reject) {
+            window.setTimeout(function () {
+                resolve({
+                    template: '<div>Async Content</div>'
+                });
+            }, 2000);
+        });
+        // 工厂函数接收一个resolve回调，在收到从服务器下载的组件定义时调用。也可以调用reject(reason)指示加载失败。
+        // 这里setTimeout只是为了演示异步，具体的下载逻辑可以自己决定，比如把组件配置写成一个对象配置，通过Ajax来请求，然后调用resolve传入配置选项。
+
+        var app = new Vue ({
+            el: '#app',
+            components: {
+                comA: {
+                    template: '<div>Component A</div>'
+                },
+                comB: {
+                    template: '<div>Component B</div>'
+                },
+                comC: {
+                    template: '<div>Component C</div>'
+                }
+            },
+            data: {
+                msginApp: 'Data claimed in upper component',
+                compName: 'comA',
+                compVar: Home
+            },
+            methods: {
+                handleChangeComp(comp) {
+                    this.compName = 'com' + comp;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

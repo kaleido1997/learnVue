@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>119 component props:组件间传递数据</title>
+</head>
+<body>
+    <div id="app">
+        <high-compo msg="Data from higher component" numdt="123"></high-compo>
+        <case-compo warning-text="A message"></case-compo>
+        <!-- 由于HTML特性不区分大小写，当使用DOM模板时，camelCase的props名称要转为kebab-case -->
+        <!-- 系统会自动转换case格式，若上面html语句中写warningText，反而无法正确传递数据 -->
+
+        <input type="text" v-model="parentMsg">
+<!--        这里用v-model绑定了上级数据parentMsg，当通过输入框任意输入时，下级组件接收到的props的"msg"也会实时响应，并更新组件模板。-->
+        <dyna-compo v-bind:msg="parentMsg"></dyna-compo>
+
+        <compare-compo msg="[1, 2, 3]"></compare-compo>             <!-- 不使用v-bind时传递的仅仅是字符串 -->
+        <compare-compo v-bind:msg="[1, 2, 3]"></compare-compo>      <!-- 使用v-bind时传递的是list内的各元素 -->
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        Vue.component('high-compo', {
+            props: ['msg', 'numdt'],                     //使用选项props来声明需要从上级组件接收的数据
+            template: '<div>{{ numdt }}: {{ msg }}</div>'
+        });
+
+        Vue.component('case-compo', {
+            props: ['warningText'],
+            template: '<h1>{{ warningText }}</h1>'
+        });
+
+        Vue.component('dyna-compo', {
+            props: ['msg'],
+            template: '<div>{{ msg }}</div>'
+        });
+
+        Vue.component('compare-compo', {
+            props: ['msg'],
+            template: '<div>{{ msg }} with length of {{ msg.length }}</div>'
+        });
+
+        var app = new Vue ({
+            el: '#app',
+
+            data: {
+                parentMsg: ''
+            }
+        })
+    </script>
+</body>
+</html>

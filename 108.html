@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>108 (v-bind)</title>
+</head>
+<body>
+    <div id="app">
+        <a v-bind:href="url">A link for Google</a> <br/>
+        <img v-bind:src="imgUrl">
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                url: 'https://www.google.com',
+                imgUrl: 'wechat.jpg'
+            }
+        })
+    </script>
+</body>
+</html>

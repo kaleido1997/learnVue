@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>114 v-directives (cont.)</title>
+</head>
+<body>
+    <div id="app">
+        Number of Clicks: {{ counter }} <br/>
+        <button @click="counter++">+1s</button>
+        <button @click="multiAdd()">+1s</button>
+        <button @click="multiAdd(10)">+10s</button>
+        <hr>
+
+        <a href="https://www.baidu.com" @click="preventView('Prevent viewing!', $event)">A search engine</a>
+<!--        特殊变量$event ，用于访问原生DOM事件-->
+        <hr>
+
+        <span>@还可以用来绑定键盘按键，如回车的keycode是13:</span>
+        <div>
+            <button @keyup.13="window.alert('Submit successful')">Click then press Enter</button>
+        </div>
+        <!-- Shift + S -->
+        <input @keyup.shift.83="handleSave()" placeholder="Click and press Shift+S">
+        <!-- Ctrl + Click -->
+        <div @click.ctrl="doSomething()">Press Ctrl and click on me</div>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                counter: 0
+            },
+            methods: {
+                multiAdd(count) {
+                    count = count || 1;     //这里||表示逻辑或，前者不为0或null时则返回前者，为0或null时返回后者
+                    this.counter += count;
+                },
+                preventView(msg, event) {
+                    event.preventDefault();
+                    window.alert(msg);
+                },
+                handleSave() {
+                    window.alert('Save successful');
+                },
+                doSomething() {
+                    window.alert('Click successful');
+                }
+            }
+        })
+    </script>
+</body>
+</html>

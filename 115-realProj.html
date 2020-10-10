@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>115 Real Project - Shopping Mart</title>
+    <link rel="stylesheet" type="text/css" href="cartStyle.css">    <!-- 通过此句挂载css文件 -->
+</head>
+<body>
+    <div id="app" v-cloak>
+<!--        业务需求：购物车需要展示一个己加入购物车的商品列表，包含商品名称、商品单价、购买数量和操作等信息，-->
+<!--           还需要实时显示购买的总价。其中购买数量可以增加或减少，每类商品还可以从购物车中移除。-->
+        <template v-if="productList.length != 0">
+<!--        template里的代码分两部分，一部分是商品列表信息，我们用表格table来展现；另一部分就是带有千位分隔符的商品总价（每隔三位数加进一个逗号）-->
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Product Name</th>
+                        <th>Product Price</th>
+                        <th>Product Number</th>
+                        <th>Action to Remove</th>
+                        <th>Action to Select <br/>
+                            Select All: <input type="checkbox" @click="changeAllCheck()" v-bind:checked="allChecked">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in productList">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>
+                            <button
+                                @click="toReduce(index)"
+                                v-bind:disabled="item.count === 1">-</button>
+                                <!-- item.count为1时将该按钮disable，通过v-bind实现button与disable特性的动态绑定 -->
+                            {{ item.count }}
+                            <button @click="toAdd(index)">+</button>
+                        </td>
+                        <td>
+                            <button @click="toRemove">Remove</button>
+                        </td>
+                        <td>
+                            <input type="checkbox" @click="changeCheck(index)" v-bind:checked="item.isChecked">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+<!--            table中：tr：一行；th：一列及列名（thead中定义）；td：内容（tbody中定义）-->
+<!--            th的数量最好与td数量对应-->
+            <div>Full Price: $ {{ totalPrice }}</div>
+        </template>
+
+        <div v-else>Shopping Cart is empty!</div>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="cartIndex.js"></script>
+<!--    这里将vue.min.js和index.js文件写在<body>的最底部，如果写在<head>里，Vue实例将无法创建，因为此时DOM还没有被解析完成-->
+</body>
+</html>

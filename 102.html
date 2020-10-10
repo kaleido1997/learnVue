@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Name (v-model)</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="name" placeholder="Please type your name here">
+        <input type="submit" value="Submit Your Name" @click="showResult">
+        <h1>
+            Hello, <span v-if="isShow">{{name}}</span> <br/>
+<!--             如何在同一行输出：把div换成span -->
+        </h1>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                isShow: false
+            },
+            methods: {
+                showResult(){
+                    this.isShow = true
+                }
+            }
+        })
+    </script>
+</body>
+</html>
