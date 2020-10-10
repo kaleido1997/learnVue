@@ -17,22 +17,20 @@
 </head>
 <body>
     <div id="app" v-cloak>
-        2333
         <tabs v-model="activeKey">
-            <pane label="Tab 1" name="1">
+            <pane label="Tab 1" name="1" closable=true>
                 Content in Tab 1
             </pane>
-            <pane label="Tab 2" name="2">
+            <pane label="Tab 2" name="2" closable=true>
                 Content in Tab 2
             </pane>
-            <pane label="Tab 3" name="3">
+            <pane label="Tab 3" name="3" closable=true>
                 Content in Tab 3
             </pane>
         </tabs>
     </div>
 
     <script src="vue.min.js"></script>
-    <script src="127-realProj2-style.css"></script>
     <script src="127-realProj2-pane.js"></script>
     <script src="127-realProj2-tabs.js"></script>
 

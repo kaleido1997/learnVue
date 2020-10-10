@@ -17,6 +17,10 @@ Vue.component('pane', {
         label: {
             type: String,
             default: ''
+        },
+        closable: {
+            type: Boolean,
+            default: true
         }
     },
     // 上面的prop: label用户是可以动态调整的，所以在pane初始化及label更新时，都要通知父组件也更新。

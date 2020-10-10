@@ -8,8 +8,10 @@ Vue.component('tabs', {
         <div class="tabs">\
             <div class="tabs-bar">\
                 <div v-bind:class="tabClass(item)" v-for="(item, index) in navList" @click="handleChange(index)">\
-                    {{ item.label }}\
+                    {{ item.label }} <hr>\
+                    <span v-if="ifClose(item)" @click="deleteTab(index, event)">xxxx</span>\
                 </div>\
+                <h1 v-if="ifNoTab()">No Available Tab!</h1>\
             </div>\
             <div class="tabs-content">\
                 <slot></slot>\
@@ -26,6 +28,39 @@ Vue.component('tabs', {
         }
     },
     methods: {
+        ifNoTab() {
+            return this.navList.length === 0;
+        },
+        ifClose(item) {
+            return item.closable == 'true';
+        },
+        deleteTab(index, event) {
+            // this.navList.splice(index, 1);   // 若不加判定直接splice，最终tab全被关闭后页面上依然留存最后一个开启的tab的内容
+            if(this.navList[index].name === this.currentValue){
+                if(index > 0){
+                    this.currentValue = this.navList[index - 1].name;   // 页面关闭后自动跳转到前一个tab
+                    this.navList.splice(index, 1);
+                    event.stopPropagation();    // 阻止冒泡，避免触发handleChange(index)方法
+                }
+                else{
+                    this.navList.splice(index, 1);
+                    event.stopPropagation();
+                    if(this.navList.length > 0){
+                        this.currentValue = this.navList[0].name;       // 若关闭的是第一个页面，则跳转至关后的第一个页面
+                    }
+                    else{
+                        this.currentValue = '';
+                    }
+                }
+            }
+            else{
+                this.navList.splice(index, 1);  // 若关闭的为其他页面，则当前curVal不变
+                event.stopPropagation();
+                if(this.navList.length === 0){
+                    this.currentValue = '';
+                }
+            }
+        },
         tabClass(item) {        // 给当前选中的tab加一个class，便于套用不同的css样式
             return ['tabs-tab', { 'tabs-tab-active': item.name === this.currentValue }]
         },
@@ -53,7 +88,8 @@ Vue.component('tabs', {
             this.getTabs().forEach(function (pane, index) {
                 _this.navList.push({
                     label: pane.label,
-                    name: pane.name || index
+                    name: pane.name || index,
+                    closable: pane.closable
                 });
                 // 如果没有给pane设置name，则默认设置它的索引
                 if (!pane.name) pane.name = index;
